@@ -1,3 +1,4 @@
+require('dotenv').config();
 const puppeteer = require("puppeteer");
 
 // add stealth plugin and use defaults (all evasion techniques)
@@ -6,12 +7,12 @@ const puppeteer = require("puppeteer");
 
 (async () => {
         try {
-            const browser = puppeteer
+            const browser = await puppeteer
                 .launch({
                     headless: false,
                     defaultViewport: null,
                     args: ["--start-fullscreen"],
-                })
+                });
             const page = await browser.newPage();
 
             const navigationPromise = page.waitForNavigation({
@@ -33,12 +34,12 @@ const puppeteer = require("puppeteer");
 
             await page.type(
                 ".tl-site-layout #loginform-email",
-                "antoniusjoshua47@gmail.com"
+                process.env.USERNAME
             );
 
             await page.type(
                 ".tl-site-layout #loginform-password",
-                "joshuakeren123"
+                process.env.PASSWORD
             );
 
             await page.waitForSelector(
@@ -105,8 +106,10 @@ const puppeteer = require("puppeteer");
             // await page.waitForSelector("#datepicker_request");
 
             // await page.
-            await page.waitForSelector('[aria-label="21 January, 2021"]');
-            const selectDate = await page.$$('[aria-label="21 January, 2021"]');
+            const attendanceDate = process.env.ATTENDACEDATE
+            
+            await page.waitForSelector(`[aria-label="${attendanceDate}"]`);
+            const selectDate = await page.$$(`[aria-label="${attendanceDate}"]`);
             // data-pick="1611162000000"
             await selectDate[1].click();
             console.log("selectDate success");
@@ -127,28 +130,33 @@ const puppeteer = require("puppeteer");
             });
 
             console.dir(testing);
-
             // console.log(await selectDateButton.$(''));
             await selectDateButton.click();
             await page.keyboard.press("Enter");
 
-            // const checkInBox = await page.waitForSelector("#checkInBox");
-            // await checkInBox.click();
-            //
-            // const checkOutBox = await page.waitForSelector("#checkOutBox");
-            // await checkOutBox.click();
-
             const checkInAttendance = await page.waitForSelector(
                 "#checkInAttendance"
             );
-            await checkInAttendance.type("09:00");
+            await checkInAttendance.type(process.env.CHECKIN);
             console.log("Check In Attendance");
 
             const checkOutAttendance = await page.waitForSelector(
                 "#checkOutAttendance"
             );
-            await checkOutAttendance.type("18:00");
+            await checkOutAttendance.type(process.env.CHECKOUT);
             console.log("Check Out Attendance");
+            
+            const notes = await page.waitForSelector("#changeshiftrequest-reason");
+            await notes.type("work from home");
+            if(process.env.IS_SUBMIT == true){
+                const btnSubmitAttendance = await page.waitForSelector("#btnSaveRequest");
+                await btnSubmitAttendance.click();
+                console.log("Button Submit Clicked");
+            }else{
+                const btnCancelAttendance = await page.waitForSelector(".custom-cancel-btn");
+                await btnCancelAttendance.click();
+                console.log("Button Cancel Clicked")
+            }
         } catch (error) {
             console.error({ error }, "error");
             await browser.close();
