@@ -1,16 +1,17 @@
-const puppeteer = require("puppeteer-extra");
+const puppeteer = require("puppeteer");
 
 // add stealth plugin and use defaults (all evasion techniques)
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-puppeteer.use(StealthPlugin());
-puppeteer
-    .launch({
-        headless: false,
-        defaultViewport: null,
-        args: ["--start-fullscreen"],
-    })
-    .then(async (browser) => {
+// const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+// puppeteer.use(StealthPlugin());
+
+(async () => {
         try {
+            const browser = puppeteer
+                .launch({
+                    headless: false,
+                    defaultViewport: null,
+                    args: ["--start-fullscreen"],
+                })
             const page = await browser.newPage();
 
             const navigationPromise = page.waitForNavigation({
@@ -131,11 +132,11 @@ puppeteer
             await selectDateButton.click();
             await page.keyboard.press("Enter");
 
-            const checkInBox = await page.waitForSelector("#checkInBox");
-            await checkInBox.click();
-
-            const checkOutBox = await page.waitForSelector("#checkOutBox");
-            await checkOutBox.click();
+            // const checkInBox = await page.waitForSelector("#checkInBox");
+            // await checkInBox.click();
+            //
+            // const checkOutBox = await page.waitForSelector("#checkOutBox");
+            // await checkOutBox.click();
 
             const checkInAttendance = await page.waitForSelector(
                 "#checkInAttendance"
@@ -150,27 +151,6 @@ puppeteer
             console.log("Check Out Attendance");
         } catch (error) {
             console.error({ error }, "error");
+            await browser.close();
         }
-
-        // await page.waitForSelector(
-        //     "#datepicker_request_root > .picker__holder > .picker__frame > .picker__wrap > .picker__box > .picker__footer > .picker__close"
-        // );
-        // await page.click(
-        //     "#datepicker_request_root > .picker__holder > .picker__frame > .picker__wrap > .picker__box > .picker__footer > .picker__close"
-        // );
-
-        // await selectDate.click();
-        // await selectDate.tap();
-        // console.log(await selectDate.getProperties());
-    });
-// (async () => {
-//     try {
-
-//     } catch (error) {
-//         console.error({ error });
-//         await browser.close();
-//     }
-
-//     //   await navigationPromise;
-
-//     //   await browser.close();
+})();
