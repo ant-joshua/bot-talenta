@@ -23,12 +23,6 @@ const puppeteer = require("puppeteer");
                 waitUntil: "networkidle2",
             });
 
-            // await page.setViewport({
-            //     width: 1920,
-            //     height: 1080,
-            // });
-            // await page.setViewport();
-
             await page.waitForSelector(".tl-site-layout #loginform-email");
             await page.click(".tl-site-layout #loginform-email");
 
@@ -106,7 +100,7 @@ const puppeteer = require("puppeteer");
             // await page.waitForSelector("#datepicker_request");
 
             // await page.
-            const attendanceDate = process.env.ATTENDACEDATE
+            const attendanceDate = process.env.ATTENDANCE_DATE
             
             await page.waitForSelector(`[aria-label="${attendanceDate}"]`);
             const selectDate = await page.$$(`[aria-label="${attendanceDate}"]`);
