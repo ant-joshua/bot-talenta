@@ -8,7 +8,7 @@ const puppeteer = require("puppeteer");
 (async () => {
     try {
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: String(process.env.HEADLESS).toLowerCase() == "true",
             defaultViewport: null,
             args: ["--start-fullscreen"],
         });
@@ -140,7 +140,7 @@ const puppeteer = require("puppeteer");
         console.log("Check Out Attendance");
 
         const notes = await page.waitForSelector("#changeshiftrequest-reason");
-        await notes.type("work from home");
+        await notes.type(process.env.ATTENDANCE_NOTE);
         if (process.env.IS_SUBMIT == "true") {
             const btnSubmitAttendance = await page.waitForSelector(
                 "#btnSaveRequest"
